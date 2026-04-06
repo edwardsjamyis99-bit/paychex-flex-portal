@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Paychex Flex | Official Employee Portal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', 'Helvetica', sans-serif;
+    }
+    body {
+      background: #eef2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 1400px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .screen { transition: 0.2s; }
+    .hidden { display: none; }
+
+    /* LOGIN STYLES - no credentials shown on page */
+    .login-card {
+      background: white;
+      max-width: 480px;
+      margin: 60px auto;
+      padding: 36px 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .paychex-logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2F85CB;
+      margin-bottom: 8px;
+    }
+    .login-title {
+      font-size: 22px;
+      color: #1e2a3a;
+      margin-bottom: 28px;
+    }
+    .input-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+    .btn-primary {
+      background: #2F85CB;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.2s;
+    }
+    .btn-primary:hover { background: #1f6aa8; }
+    .btn-secondary {
+      background: white;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .flex-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+    .flex-links a {
+      color: #2F85CB;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    /* Dashboard */
+    .dashboard-header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    .nav-links span {
+      cursor: pointer;
+      font-weight: 500;
+      color: #1e293b;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .nav-links span.active {
+      color: #2F85CB;
+      border-bottom: 2px solid #2F85CB;
+    }
+    .dashboard-content {
+      padding: 28px;
+      background: #f8fafc;
+      min-height: 70vh;
+    }
+    .widget {
+      background: white;
+      border-radius: 16px;
+      padding: 22px;
+      border: 1px solid #eef2f6;
+      margin-bottom: 24px;
+    }
+    .widget h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #0f172a;
+      border-left: 3px solid #2F85CB;
+      padding-left: 12px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #475569;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .admin-panel {
+      background: #fffdf7;
+      border-left: 4px solid #f5a623;
+      padding: 20px;
+      border-radius: 16px;
+    }
+    .employee-card {
+      background: #f1f5f9;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge-pending { background: #fef3c7; color: #b45309; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+    .badge-approved { background: #e0f2e9; color: #1f7840; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+    button.small-btn {
+      background: none;
+      border: 1px solid #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    /* PDF Paystub - Authentic Paychex Style */
+    .paystub-pdf {
+      background: white;
+      padding: 32px 36px;
+      max-width: 980px;
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      color: #000;
+    }
+    .pdf-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #cccccc;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    .employer-block h2 { font-size: 18px; font-weight: bold; margin-bottom: 6px; }
+    .employer-block p, .employee-details p { margin: 4px 0; font-size: 11px; color: #222; }
+    .employee-details { text-align: right; font-size: 11px; }
+    .earnings-table, .deductions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 11px;
+    }
+    .earnings-table th, .deductions-table th {
+      text-align: left;
+      background: #f9f9f9;
+      padding: 8px 6px;
+      border-bottom: 1px solid #ddd;
+      font-weight: 600;
+    }
+    .earnings-table td, .deductions-table td { padding: 6px; border-bottom: 1px solid #efefef; }
+    .numeric { text-align: right; }
+    .net-pay-section {
+      text-align: right;
+      background: #F5F5F5;
+      padding: 14px 24px;
+      border: 1px solid #e0e0e0;
+      font-weight: bold;
+      font-size: 15px;
+      margin-top: 20px;
+    }
+    .ytd-note { margin-top: 18px; font-size: 10px; border-top: 1px solid #ccc; padding-top: 12px; }
+  </style>
+</head>
+<body>
+<div class="app-container" id="appRoot">
+  <!-- LOGIN SCREEN - NO CREDENTIALS SHOWN -->
+  <div id="loginScreen" class="screen">
+    <div class="login-card">
+      <div class="paychex-logo">Paychex Flex</div>
+      <div class="login-title">Employee Login</div>
+      <div class="input-group"><label>Username</label><input type="text" id="loginUsername" placeholder="Enter username"></div>
+      <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Password"></div>
+      <button class="btn-primary" id="doLoginBtn">Sign In</button>
+      <div class="flex-links"><a id="gotoRegisterLink">Create Account</a><a>Forgot Username?</a><a>Forgot Password?</a></div>
+    </div>
+  </div>
+
+  <!-- REGISTRATION - FULL EMPLOYEE ONBOARDING (Identity, Contact, Tax, Banking) -->
+  <div id="registerScreen" class="screen hidden">
+    <div class="login-card" style="max-width: 700px; margin: 40px auto;">
+      <div class="paychex-logo">Employee Registration</div>
+      <div class="login-title">Complete All Fields Below</div>
+      <form id="registrationForm">
+        <div class="form-row"><div class="form-group"><label>First Name *</label><input id="regFirstName" required></div><div class="form-group"><label>Last Name *</label><input id="regLastName" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Date of Birth *</label><input type="date" id="regDOB" required></div><div class="form-group"><label>SSN *</label><input type="text" id="regSSN" placeholder="XXX-XX-XXXX" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Email Address *</label><input type="email" id="regEmail" required></div><div class="form-group"><label>Phone Number *</label><input type="tel" id="regPhone" placeholder="(555) 555-5555" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Home Address *</label><input id="regAddress" placeholder="Street" required></div><div class="form-group"><label>City *</label><input id="regCity" required></div></div>
+        <div class="form-row"><div class="form-group"><label>State *</label><input id="regState" placeholder="FL" required></div><div class="form-group"><label>ZIP Code *</label><input id="regZip" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Routing Number *</label><input id="regRouting" placeholder="021000021" required></div><div class="form-group"><label>Account Number *</label><input id="regAccount" placeholder="123456789" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Account Type</label><select id="regAccountType"><option>Checking</option><option>Savings</option></select></div><div class="form-group"><label>Filing Status (W-4)</label><select id="regFilingStatus"><option>Single</option><option>Married</option><option>Head of Household</option></select></div></div>
+        <div class="form-row"><div class="form-group"><label>Dependents</label><input type="number" id="regDependents" value="0"></div><div class="form-group"><label>Extra Withholding ($)</label><input type="number" id="regExtraWithholding" value="0"></div></div>
+        <div class="form-row"><div class="form-group"><label>Username *</label><input id="regUsername" required></div><div class="form-group"><label>Password *</label><input type="password" id="regPassword" required></div></div>
+        <div class="form-row"><div class="form-group"><label>Emergency Contact Name</label><input id="regEmergencyName"></div><div class="form-group"><label>Emergency Phone</label><input id="regEmergencyPhone"></div></div>
+        <button type="button" class="btn-primary" id="doRegisterBtn">Submit Registration (Pending Admin Approval)</button>
+      </form>
+      <div class="flex-links"><a id="backToLoginLink">← Back to Login</a></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="screen hidden">
+    <div class="dashboard-header">
+      <div class="paychex-logo" style="font-size:20px;">Paychex Flex</div>
+      <div class="nav-links" id="navLinks"><span data-tab="dashboard" class="active">Dashboard</span><span data-tab="pay">Pay</span><span data-tab="time">Time</span><span data-tab="documents">Documents</span><span data-tab="profile">Profile</span></div>
+      <div><span id="userNameDisplay"></span> <button class="btn-secondary" id="logoutBtn" style="margin-left:15px;">Log Out</button></div>
+    </div>
+    <div class="dashboard-content" id="mainContent"></div>
+  </div>
+</div>
+
+<script>
+  // ==================== COMPANY DATA ====================
+  const COMPANY_INFO = {
+    name: "U.S. TITLE & ESCROW INC.",
+    address: "2715 E Oakland Park Blvd Ste 300, Fort Lauderdale, FL 33306",
+    fein: "59-3300551"
+  };
+
+  // ==================== GLOBAL STATE ====================
+  let users = [];      // { id, username, password, role, status, personal, tax, banking, payHistory, hourlyRate }
+  let currentUser = null;
+
+  // Load/Save
+  function persist() { localStorage.setItem("paychex_production", JSON.stringify(users)); }
+  function loadData() {
+    const stored = localStorage.getItem("paychex_production");
+    if(stored) { try { users = JSON.parse(stored); } catch(e){} }
+    if(!users.length){
+      // Create ADMIN (auto-approved)
+      users.push({
+        id: "admin_1", username: "admin", password: "admin123$", role: "admin", status: "approved",
+        personal: { firstName: "System", lastName: "Admin", email: "admin@ustitle.com", phone: "", address: "", city: "", state: "", zip: "", dob: "", ssn: "" },
+        tax: { filingStatus: "Single", dependents: 0, extraWithholding: 0 },
+        banking: { routing: "", account: "", accountType: "Checking" },
+        payHistory: [], hourlyRate: 0
+      });
+      persist();
+    }
+    // Ensure every employee has proper structure
+    users.forEach(u => { if(u.role === "employee" && !u.payHistory) u.payHistory = []; });
+  }
+
+  // Generate authentic paystub (dates consistent, proper formatting, no emojis, aligned columns)
+  function generatePaystub(employee, payDateObj = null) {
+    const rate = employee.hourlyRate || 26.50;
+    const hoursRegular = 80;
+    const overtimeHours = 0; // no random for consistency
+    const regularPay = hoursRegular * rate;
+    const gross = regularPay;
+    // Tax calculations based on filing status and dependents
+    let fedTaxRate = employee.tax?.filingStatus === "Married" ? 0.10 : 0.12;
+    let dependentDeduction = (employee.tax?.dependents || 0) * 15;
+    let federalTax = Math.max(0, (gross * fedTaxRate) - dependentDeduction);
+    federalTax = parseFloat(federalTax.toFixed(2));
+    const stateTax = parseFloat((gross * 0.039).toFixed(2));
+    const socialSecurity = parseFloat((gross * 0.062).toFixed(2));
+    const medicare = parseFloat((gross * 0.0145).toFixed(2));
+    const healthInsurance = 47.50;
+    let extraWithholding = employee.tax?.extraWithholding || 0;
+    const totalDeductions = federalTax + stateTax + socialSecurity + medicare + healthInsurance + extraWithholding;
+    const netPay = gross - totalDeductions;
+    
+    let payDate = payDateObj ? new Date(payDateObj) : new Date();
+    if(!payDateObj){
+      payDate.setDate(payDate.getDate() - 14);
+    }
+    const periodEnd = new Date(payDate);
+    const periodStart = new Date(payDate);
+    periodStart.setDate(periodStart.getDate() - 14);
+    const formatDate = (d) => `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+    
+    // YTD values - consistent
+    const ytdGross = (18500 + gross).toFixed(2);
+    const ytdDeductions = (4250 + totalDeductions).toFixed(2);
+    const ytdNet = (ytdGross - ytdDeductions).toFixed(2);
+    
+    return {
+      payDate: formatDate(payDate),
+      periodStart: formatDate(periodStart),
+      periodEnd: formatDate(periodEnd),
+      gross: gross.toFixed(2),
+      regularHours: hoursRegular,
+      rate: rate,
+      regularPay: regularPay.toFixed(2),
+      federalTax: federalTax,
+      stateTax: stateTax,
+      socialSecurity: socialSecurity,
+      medicare: medicare,
+      healthInsurance: healthInsurance,
+      extraWithholding: extraWithholding,
+      totalDeductions: totalDeductions.toFixed(2),
+      netPay: netPay.toFixed(2),
+      ytdGross: ytdGross,
+      ytdDeductions: ytdDeductions,
+      ytdNet: ytdNet
+    };
+  }
+
+  function initEmployeePayHistory(employee) {
+    if(!employee.payHistory || employee.payHistory.length === 0){
+      const now = new Date();
+      const stub1 = generatePaystub(employee, new Date(now.setDate(now.getDate()-42)));
+      const stub2 = generatePaystub(employee, new Date(now.setDate(now.getDate()+28)));
+      employee.payHistory = [stub1, stub2];
+      persist();
+    }
+  }
+
+  // Register new employee (PENDING admin approval)
+  function registerPendingEmployee(formData){
+    if(users.find(u => u.username === formData.username)) return false;
+    const newEmp = {
+      id: "emp_" + Date.now(),
+      username: formData.username,
+      password: formData.password,
+      role: "employee",
+      status: "pending",   // 🔐 MUST be approved by admin
+      personal: {
+        firstName: formData.firstName, lastName: formData.lastName, dob: formData.dob, ssn: formData.ssn,
+        email: formData.email, phone: formData.phone, address: formData.address, city: formData.city,
+        state: formData.state, zip: formData.zip, emergencyName: formData.emergencyName, emergencyPhone: formData.emergencyPhone
+      },
+      tax: {
+        filingStatus: formData.filingStatus, dependents: parseInt(formData.dependents) || 0,
+        extraWithholding: parseFloat(formData.extraWithholding) || 0
+      },
+      banking: {
+        routing: formData.routing, account: formData.account, accountType: formData.accountType
+      },
+      hourlyRate: 26.50,   // default, admin can adjust
+      payHistory: []
+    };
+    users.push(newEmp);
+    persist();
+    return true;
+  }
+
+  // Admin approve employee
+  function approveEmployee(empId, hourlyRate){
+    const emp = users.find(u => u.id === empId);
+    if(emp && emp.status === "pending"){
+      emp.status = "approved";
+      emp.hourlyRate = parseFloat(hourlyRate);
+      initEmployeePayHistory(emp);
+      persist();
+      return true;
+    }
+    return false;
+  }
+
+  // Render logic
+  function renderDashboard(){
+    if(!currentUser) return;
+    const container = document.getElementById("mainContent");
+    const activeTab = document.querySelector("#navLinks .active")?.getAttribute("data-tab") || "dashboard";
+    if(currentUser.role === "admin") renderAdminView(container, activeTab);
+    else if(currentUser.status === "pending") renderPendingApproval(container);
+    else renderEmployeeView(container, activeTab);
+  }
+
+  function renderPendingApproval(container){
+    container.innerHTML = `<div class="widget" style="text-align:center; padding:60px;"><h3>⏳ Account Pending Approval</h3><p>Your registration has been submitted. An administrator must approve your account before you can access payroll features.</p><p style="margin-top:20px; color:#2F85CB;">You will receive access once verified.</p></div>`;
+  }
+
+  function renderEmployeeView(container, tab){
+    const emp = currentUser;
+    if(tab === "dashboard"){
+      const lastStub = emp.payHistory?.length ? emp.payHistory[emp.payHistory.length-1] : null;
+      container.innerHTML = `
+        <div class="widget"><h3>Welcome, ${emp.personal.firstName}</h3><p><strong>${COMPANY_INFO.name}</strong><br>${COMPANY_INFO.address}</p></div>
+        <div class="widget"><h3>Pay Summary</h3><p>Last Pay: <strong>$${lastStub ? lastStub.netPay : '0.00'}</strong> on ${lastStub ? lastStub.payDate : 'N/A'}</p><button class="small-btn" id="viewPayBtn">View Pay Stubs</button></div>
+        <div class="widget"><h3>Direct Deposit</h3><p>${emp.banking.accountType} ****${emp.banking.account.slice(-4)}</p><button class="small-btn">Edit</button></div>`;
+      document.getElementById("viewPayBtn")?.addEventListener("click",()=>{ document.querySelector("#navLinks span[data-tab='pay']").click(); });
+    } 
+    else if(tab === "pay"){
+      let html = `<div class="widget"><h3>Pay Stubs</h3>`;
+      emp.payHistory.forEach((stub, idx) => {
+        html += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #e2e8f0;"><span><strong>${stub.payDate}</strong> — Net: $${stub.netPay}</span><button class="small-btn pdf-download" data-idx="${idx}">View PDF</button></div>`;
+      });
+      html += `<hr><h3>Tax Documents</h3><button class="small-btn">W-2 (2025)</button></div>`;
+      container.innerHTML = html;
+      document.querySelectorAll(".pdf-download").forEach(btn => {
+        btn.addEventListener("click", (e) => { const idx = btn.getAttribute("data-idx"); generatePDF(emp, parseInt(idx)); });
+      });
+    }
+    else if(tab === "profile"){
+      container.innerHTML = `<div class="widget"><h3>Personal Information</h3><p><strong>Name:</strong> ${emp.personal.firstName} ${emp.personal.lastName}</p><p><strong>DOB:</strong> ${emp.personal.dob}</p><p><strong>Email:</strong> ${emp.personal.email}</p><p><strong>Address:</strong> ${emp.personal.address}, ${emp.personal.city}, ${emp.personal.state} ${emp.personal.zip}</p><hr><h3>Tax Settings (W-4)</h3><p>Filing Status: ${emp.tax.filingStatus} | Dependents: ${emp.tax.dependents} | Extra Withholding: $${emp.tax.extraWithholding}</p></div>`;
+    }
+    else {
+      container.innerHTML = `<div class="widget"><h3>Time & Attendance</h3><p>PTO Balance: 42 hours</p><button class="small-btn">Request Time Off</button></div>`;
+    }
+  }
+
+  function generatePDF(employee, stubIdx){
+    const stub = employee.payHistory[stubIdx];
+    const pdfDiv = document.createElement('div');
+    pdfDiv.className = 'paystub-pdf';
+    pdfDiv.innerHTML = `
+      <div class="pdf-header"><div class="employer-block"><h2>${COMPANY_INFO.name}</h2><p>${COMPANY_INFO.address}</p><p>FEIN: ${COMPANY_INFO.fein}</p><p style="color:#2F85CB;">Payroll by Paychex</p></div>
+      <div class="employee-details"><p><strong>${employee.personal.firstName} ${employee.personal.lastName}</strong></p><p>Pay Date: ${stub.payDate}</p><p>Pay Period: ${stub.periodStart} – ${stub.periodEnd}</p></div></div>
+      <table class="earnings-table"><thead><tr><th>Earnings Description</th><th>Hours</th><th>Rate</th><th class="numeric">Current</th><th class="numeric">YTD</th></tr></thead>
+      <tbody><tr><td>Regular Pay</td><td>${stub.regularHours}</td><td>$${stub.rate.toFixed(2)}</td><td class="numeric">$${stub.regularPay}</td><td class="numeric">-</td></tr>
+      <tr style="font-weight:600;"><td>Gross Pay</td><td></td><td></td><td class="numeric">$${stub.gross}</td><td class="numeric">$${stub.ytdGross}</td></tr></tbody></table>
+      <table class="deductions-table"><thead><tr><th>Deductions</th><th class="numeric">Current</th><th class="numeric">YTD</th></tr></thead>
+      <tbody><tr><td>Federal Income Tax</td><td class="numeric">$${stub.federalTax.toFixed(2)}</td><td class="numeric">-</td></tr>
+      <tr><td>State Tax</td><td class="numeric">$${stub.stateTax.toFixed(2)}</td><td class="numeric">-</td></tr>
+      <tr><td>Social Security</td><td class="numeric">$${stub.socialSecurity.toFixed(2)}</td><td class="numeric">-</td></tr>
+      <tr><td>Medicare</td><td class="numeric">$${stub.medicare.toFixed(2)}</td><td class="numeric">-</td></tr>
+      <tr><td>Health Insurance</td><td class="numeric">$${stub.healthInsurance.toFixed(2)}</td><td class="numeric">-</td></tr>
+      ${stub.extraWithholding > 0 ? `<tr><td>Extra Withholding</td><td class="numeric">$${stub.extraWithholding.toFixed(2)}</td><td class="numeric">-</td></tr>` : ''}
+      <tr style="border-top:1px solid #aaa;"><td><strong>Total Deductions</strong></td><td class="numeric"><strong>$${stub.totalDeductions}</strong></td><td class="numeric"><strong>$${stub.ytdDeductions}</strong></td></tr>
+      </tbody></table>
+      <div class="net-pay-section">✅ NET PAY: $${stub.netPay}</div>
+      <div class="ytd-note">Year-to-Date — Gross: $${stub.ytdGross} | Deductions: $${stub.ytdDeductions} | Net: $${stub.ytdNet}</div>
+      <div style="font-size:9px; text-align:center; margin-top:20px;">Direct Deposit: ${employee.banking.accountType} ****${employee.banking.account.slice(-4)}</div>`;
+    html2pdf().set({ margin: 0.5, filename: `Paystub_${stub.payDate}_${employee.personal.lastName}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter' } }).from(pdfDiv).save();
+  }
+
+  function renderAdminView(container, tab){
+    const pendingEmps = users.filter(u => u.role === "employee" && u.status === "pending");
+    const approvedEmps = users.filter(u => u.role === "employee" && u.status === "approved");
+    container.innerHTML = `
+      <div class="admin-panel"><h3>👑 Admin Control — ${COMPANY_INFO.name}</h3><p>FEIN: ${COMPANY_INFO.fein}</p>
+      <h4>Pending Approvals (${pendingEmps.length})</h4>
+      <div id="pendingList"></div><hr>
+      <h4>Active Employees (${approvedEmps.length})</h4>
+      <div id="approvedList"></div></div>`;
+    const pendingDiv = document.getElementById("pendingList");
+    pendingDiv.innerHTML = pendingEmps.map(emp => `<div class="employee-card"><span><strong>${emp.personal.firstName} ${emp.personal.lastName}</strong> (${emp.personal.email})</span><span><input type="number" id="rate_${emp.id}" placeholder="Hourly Rate" value="27.50" style="width:100px;"><button class="small-btn approveBtn" data-id="${emp.id}">Approve</button></span></div>`).join("");
+    document.querySelectorAll(".approveBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const rateInput = document.getElementById(`rate_${id}`);
+        if(approveEmployee(id, rateInput.value)) { alert("Employee approved! They can now log in."); renderAdminView(container, "dashboard"); }
+        else alert("Error");
+      });
+    });
+    const approvedDiv = document.getElementById("approvedList");
+    approvedDiv.innerHTML = approvedEmps.map(emp => `<div class="employee-card"><span>${emp.personal.firstName} ${emp.personal.lastName} — $${emp.hourlyRate}/hr</span><span class="badge-approved">Active</span></div>`).join("");
+  }
+
+  // Event bindings
+  function bindEvents(){
+    document.getElementById("doLoginBtn")?.addEventListener("click", () => {
+      const uname = document.getElementById("loginUsername").value;
+      const pwd = document.getElementById("loginPassword").value;
+      const user = users.find(u => u.username === uname && u.password === pwd);
+      if(user){
+        currentUser = user;
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("registerScreen").classList.add("hidden");
+        document.getElementById("dashboardScreen").classList.remove("hidden");
+        document.getElementById("userNameDisplay").innerText = user.personal?.firstName || user.username;
+        renderDashboard();
+      } else alert("Invalid credentials or pending approval.");
+    });
+    document.getElementById("gotoRegisterLink")?.addEventListener("click", () => {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("registerScreen").classList.remove("hidden");
+    });
+    document.getElementById("backToLoginLink")?.addEventListener("click", () => {
+      document.getElementById("registerScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    });
+    document.getElementById("doRegisterBtn")?.addEventListener("click", () => {
+      const form = {
+        firstName: document.getElementById("regFirstName").value, lastName: document.getElementById("regLastName").value,
+        dob: document.getElementById("regDOB").value, ssn: document.getElementById("regSSN").value,
+        email: document.getElementById("regEmail").value, phone: document.getElementById("regPhone").value,
+        address: document.getElementById("regAddress").value, city: document.getElementById("regCity").value,
+        state: document.getElementById("regState").value, zip: document.getElementById("regZip").value,
+        routing: document.getElementById("regRouting").value, account: document.getElementById("regAccount").value,
+        accountType: document.getElementById("regAccountType").value, filingStatus: document.getElementById("regFilingStatus").value,
+        dependents: document.getElementById("regDependents").value, extraWithholding: document.getElementById("regExtraWithholding").value,
+        username: document.getElementById("regUsername").value, password: document.getElementById("regPassword").value,
+        emergencyName: document.getElementById("regEmergencyName").value, emergencyPhone: document.getElementById("regEmergencyPhone").value
+      };
+      if(!form.firstName || !form.lastName || !form.dob || !form.ssn || !form.username || !form.password){ alert("Please fill all required fields (*)"); return; }
+      if(registerPendingEmployee(form)) alert("Registration submitted! Awaiting admin approval.");
+      else alert("Username already exists.");
+      document.getElementById("registerScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    });
+    document.getElementById("logoutBtn")?.addEventListener("click", () => { currentUser = null; document.getElementById("dashboardScreen").classList.add("hidden"); document.getElementById("loginScreen").classList.remove("hidden"); });
+    document.querySelectorAll("#navLinks span").forEach(tab => {
+      tab.addEventListener("click", () => { document.querySelectorAll("#navLinks span").forEach(t=>t.classList.remove("active")); tab.classList.add("active"); renderDashboard(); });
+    });
+  }
+
+  loadData();
+  bindEvents();
+</script>
+</body>
+</html>
